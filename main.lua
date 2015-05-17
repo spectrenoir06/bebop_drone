@@ -1,4 +1,8 @@
 
+
+local socket = require "socket"
+local struct = require "struct"
+
 new = {}
 
 function new._object(class, o)
@@ -34,12 +38,60 @@ end
 function bebop:draw()
     love.graphics.setColor( 255, 255, 255, 255)
     love.graphics.draw( self.img,self.x, self.y,  math.rad(90), 1, 1, self.img:getWidth() / 2, self.img:getHeight() / 2)
-    love.graphics.setColor( 255, 0, 0, 255)
+    if self.front < 75 then
+        love.graphics.setColor( 255, 0, 0, 255)
+    else
+        love.graphics.setColor( 0, 255, 0, 255)
+    end
     love.graphics.print( math.ceil(self.front).." cm", 1280/2 - 200, 720/2 - 50)
     love.graphics.rectangle( 'fill', 1280/2 - self.img:getWidth() / 2 - self.front + 100, 720/2 - self.largeur / 2 , self.front, self.largeur)
 end
 
+function bebop:send(roll, pitch, yaw, gaz)
+
+    s = struct.pack("bbbi4bbi2bbbbbf",
+        0x02, -- frame_type
+        0x0a, -- buffer_id
+        42, -- sequence
+        0x14, -- size
+        0x01, -- id_project
+        0x00, -- class_piloting
+        0x02, -- cmd
+        0x01, -- flag
+        roll, -- roll
+        pitch, -- pitch
+        yaw, -- yaw
+        gaz, -- gaz
+        0x00 -- psi
+        )
+    udpSocket:send(s)
+    s = struct.pack("bbbi4bbi2bbbbbf",
+        0x02, -- frame_type
+        0x0a, -- buffer_id
+        42 - 10, -- sequence
+        0x14, -- size
+        0x01, -- id_project
+        0x00, -- class_piloting
+        0x02, -- cmd
+        0x01, -- flag
+        roll, -- roll
+        pitch, -- pitch
+        yaw, -- yaw
+        gaz, -- gaz
+        0x00 -- psi
+        )
+    udpSocket:send(s)
+
+end
+
+-----------------------------------
+
 rserial=io.open("/dev/ttyACM0","r")
+
+if not rserial then
+    error("Pas de port serie ouvert")
+end
+
 while chaine==nil do
         chaine=rserial:read()
         rserial:flush()
@@ -53,22 +105,34 @@ function love.load()
 
     drone = new.bebop()
     love.graphics.setBackgroundColor(255, 255, 255)
+
+    udpSocket = assert(socket.udp())
+    udpSocket:settimeout(0)
+    udpSocket:setpeername("localhost", 54321)
+
 end
 
 i = 0
+j = 0
 
 function love.update(dt)
     i = i + dt
-    --if (i > 0.10) then
-        chaine = rserial:read()
-        rserial:flush()
+    j = j + dt
+    if (i > 0.05) then
+            chaine = rserial:read()
+            rserial:flush()
         if chaine then
             drone.front = tonumber(chaine)
         end
         print(chaine)
         i = 0
-    --end
-
+    end
+    if j > 0.025 then
+        if (drone.front < 75) then
+            drone:send(0, -100, 0, 0)
+        end
+        j = 0
+    end
 end
 
 function love.draw()
