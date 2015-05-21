@@ -96,7 +96,6 @@ while chaine==nil do
         chaine=rserial:read()
         rserial:flush()
 end
-print(chaine)
 
 ----------------------------------------------------------------
 
@@ -116,18 +115,12 @@ i = 0
 j = 0
 
 function love.update(dt)
-    i = i + dt
     j = j + dt
-    if (i > 0.05) then
-            chaine = rserial:read()
-            rserial:flush()
-        if chaine then
-            drone.front = tonumber(chaine)
-        end
-        print(chaine)
-        i = 0
-    end
-    if j > 0.025 then
+
+    drone.front = rserial:read('*n')
+    rserial:flush()
+
+    if j > 0.02 then
         if (drone.front < 75) then
             drone:send(0, -100, 0, 0)
         end
