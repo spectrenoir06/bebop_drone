@@ -58,7 +58,7 @@ function bebop:drawLeft()
 end
 
 function bebop:drawRight()
-    if self.left < 75 then
+    if self.right < 75 then
         love.graphics.setColor( 255, 0, 0, 255)
     else
         love.graphics.setColor( 0, 255, 0, 255)
@@ -148,11 +148,11 @@ function love.update(dt)
     j = j + dt
     str = rserial:read()
     if str then
-        print(str)
-        drone.left, drone.right = string.match(str,"(%d+) (%d+)")
-        drone.left = tonumber(drone.left)
-        drone.right = tonumber(drone.right)
-        print(drone.left, drone.right)
+        left, right = string.match(str,"(%d+) (%d+)")
+        if (left and right) then
+            drone.left = tonumber(left)
+            drone.right = tonumber(right)
+        end
     end
     rserial:flush()
 
