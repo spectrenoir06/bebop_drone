@@ -59,10 +59,14 @@ void loop()
   front = scanFront();
   left = scanLeft();
   right = scanRight();
+  
+  /* --------- send to computer ----------- */
   Serial.print(front);
   Serial.print(" ");
   Serial.print(left);
   Serial.print(" ");
   Serial.println(right); 
-  delay(90); 
+  /* -------------------------------------- */
+ 
+  //delay(90); 
 }
