@@ -1,3 +1,6 @@
+int front_trig = 5; 
+int front_echo = 4;
+
 int right_trig = 1; 
 int right_echo = 2;
 
@@ -6,6 +9,8 @@ int left_echo = 20;
 
 long lecture_echo; 
 long cm;
+
+int front, left, right;
 
 void setup() 
 { 
@@ -39,12 +44,25 @@ long scanRight()
   return (lecture_echo / 58); 
 }
 
+long scanFront()
+{
+  digitalWrite(front_trig, HIGH); 
+  delayMicroseconds(10); 
+  digitalWrite(front_trig, LOW); 
+  lecture_echo = pulseIn(front_echo, HIGH); 
+  return (lecture_echo / 58);
+}
 
 
 void loop() 
 {
-  Serial.print(scanLeft());
+  front = scanFront();
+  left = scanLeft();
+  right = scanRight();
+  Serial.print(front);
   Serial.print(" ");
- Serial.println(scanRight()); 
-  delay(100); 
+  Serial.print(left);
+  Serial.print(" ");
+  Serial.println(right); 
+  delay(90); 
 }

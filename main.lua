@@ -146,15 +146,18 @@ j = 0
 
 function love.update(dt)
     j = j + dt
-    str = rserial:read()
+    str = rserial:read("*l")
+    print("str = ",str)
     if str then
-        left, right = string.match(str,"(%d+) (%d+)")
-        if (left and right) then
+        front, left, right = string.match(str,"(%d+) (%d+) (%d+)")
+        print(front, left, right)
+        if (front and left and right) then
+            drone.front = tonumber(front)
             drone.left = tonumber(left)
             drone.right = tonumber(right)
         end
     end
-    rserial:flush()
+    --rserial:flush()
 
     if j > 0.02 then
         if (drone.front < 75) then
