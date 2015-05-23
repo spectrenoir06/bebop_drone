@@ -82,33 +82,33 @@ function bebop:send(roll, pitch, yaw, gaz)
     s = struct.pack("bbbi4bbi2bbbbbf",
         0x02, -- frame_type
         0x0a, -- buffer_id
-        42, -- sequence
+        42,   -- sequence
         0x14, -- size
         0x01, -- id_project
         0x00, -- class_piloting
         0x02, -- cmd
         0x01, -- flag
         roll, -- roll
-        pitch, -- pitch
-        yaw, -- yaw
-        gaz, -- gaz
-        0x00 -- psi
+        pitch,-- pitch
+        yaw,  -- yaw
+        gaz,  -- gaz
+        0x00  -- psi
         )
     udpSocket:send(s)
     s = struct.pack("bbbi4bbi2bbbbbf",
         0x02, -- frame_type
         0x0a, -- buffer_id
-        42 - 10, -- sequence
+        32,   -- sequence
         0x14, -- size
         0x01, -- id_project
         0x00, -- class_piloting
         0x02, -- cmd
         0x01, -- flag
         roll, -- roll
-        pitch, -- pitch
-        yaw, -- yaw
-        gaz, -- gaz
-        0x00 -- psi
+        pitch,-- pitch
+        yaw,  -- yaw
+        gaz,  -- gaz
+        0x00  -- psi
         )
     udpSocket:send(s)
 
