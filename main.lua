@@ -25,7 +25,7 @@ function bebop.initialize()
    local o = {
        x        = 1280/2,
        y        = 720/2,
-       front    = 50,
+       front    = 0,
        left     = 0,
        right    = 0,
        bottom   = 0,
@@ -35,9 +35,8 @@ function bebop.initialize()
    return new._object(bebop, o)
 end
 
-function bebop:draw()
-    love.graphics.setColor( 255, 255, 255, 255)
-    love.graphics.draw( self.img,self.x, self.y,  math.rad(90), 1, 1, self.img:getWidth() / 2, self.img:getHeight() / 2)
+
+function bebop:drawFront()
     if self.front < 75 then
         love.graphics.setColor( 255, 0, 0, 255)
     else
@@ -47,38 +46,69 @@ function bebop:draw()
     love.graphics.rectangle( 'fill', 1280/2 - self.img:getWidth() / 2 - self.front + 100, 720/2 - self.largeur / 2 , self.front, self.largeur)
 end
 
+
+function bebop:drawLeft()
+    if self.left < 75 then
+        love.graphics.setColor( 255, 0, 0, 255)
+    else
+        love.graphics.setColor( 0, 255, 0, 255)
+    end
+    love.graphics.print( math.ceil(self.left).." cm", 1280/2 - 30, 720/2 + 70)
+    love.graphics.rectangle( 'fill', 1280/2 - self.largeur / 2, 720/4 * 2.5, self.largeur, self.left)
+end
+
+function bebop:drawRight()
+    if self.right < 75 then
+        love.graphics.setColor( 255, 0, 0, 255)
+    else
+        love.graphics.setColor( 0, 255, 0, 255)
+    end
+    love.graphics.print( math.ceil(self.right).." cm", 1280/2 - 30, 720/2 - 70)
+    love.graphics.rectangle( 'fill', 1280/2 - self.largeur / 2, 720/4 * 1.5 - self.right, self.largeur, self.right)
+end
+
+
+function bebop:draw()
+    love.graphics.setColor( 255, 255, 255, 255)
+    love.graphics.draw( self.img,self.x, self.y,  math.rad(90), 1, 1, self.img:getWidth() / 2, self.img:getHeight() / 2)
+
+    self:drawFront()
+    self:drawLeft()
+    self:drawRight()
+end
+
 function bebop:send(roll, pitch, yaw, gaz)
 
     s = struct.pack("bbbi4bbi2bbbbbf",
         0x02, -- frame_type
         0x0a, -- buffer_id
-        42, -- sequence
+        42,   -- sequence
         0x14, -- size
         0x01, -- id_project
         0x00, -- class_piloting
         0x02, -- cmd
         0x01, -- flag
         roll, -- roll
-        pitch, -- pitch
-        yaw, -- yaw
-        gaz, -- gaz
-        0x00 -- psi
+        pitch,-- pitch
+        yaw,  -- yaw
+        gaz,  -- gaz
+        0x00  -- psi
         )
     udpSocket:send(s)
     s = struct.pack("bbbi4bbi2bbbbbf",
         0x02, -- frame_type
         0x0a, -- buffer_id
-        42 - 10, -- sequence
+        32,   -- sequence
         0x14, -- size
         0x01, -- id_project
         0x00, -- class_piloting
         0x02, -- cmd
         0x01, -- flag
         roll, -- roll
-        pitch, -- pitch
-        yaw, -- yaw
-        gaz, -- gaz
-        0x00 -- psi
+        pitch,-- pitch
+        yaw,  -- yaw
+        gaz,  -- gaz
+        0x00  -- psi
         )
     udpSocket:send(s)
 
@@ -96,7 +126,6 @@ while chaine==nil do
         chaine=rserial:read()
         rserial:flush()
 end
-print(chaine)
 
 ----------------------------------------------------------------
 
@@ -116,18 +145,21 @@ i = 0
 j = 0
 
 function love.update(dt)
-    i = i + dt
     j = j + dt
-    if (i > 0.05) then
-            chaine = rserial:read()
-            rserial:flush()
-        if chaine then
-            drone.front = tonumber(chaine)
+    str = rserial:read("*l")
+    print("str = ",str)
+    if str then
+        front, left, right = string.match(str,"(%d+) (%d+) (%d+)")
+        print(front, left, right)
+        if (front and left and right) then
+            drone.front = tonumber(front)
+            drone.left = tonumber(left)
+            drone.right = tonumber(right)
         end
-        print(chaine)
-        i = 0
     end
-    if j > 0.025 then
+    --rserial:flush()
+
+    if j > 0.02 then
         if (drone.front < 75) then
             drone:send(0, -100, 0, 0)
         end
