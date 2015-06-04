@@ -9,22 +9,69 @@
 
 #define id_project      0x01
 #define class_piloting  0x00
-#define cmd_flatTrim    0x0000;
-#define cmd_takeoff     0x0100;
+#define cmd_flatTrim    0x00
+#define cmd_takeoff     0x01
+#define cmd_pcmd        0x02
+#define cmd_land        0x03
+#define cmd_emergency   0x04
 
-#define cmd_taland      0x0300;
-#define cmd_emergency   0x0400;
+#define flag             0x00
 
-byte packet[13] = {
+uint8_t packet[13] = {
   0x03,
-  buffer_id,
-  0x42,
+  0x0b,
+  0x56,
+  0x0b, 0x00, 0x00, 0x00,
+  id_project,
+  class_piloting,
+  cmd_takeoff,
+  0x00,
+  '\r',
+  '\n'
+};
+
+uint8_t packet2[22] = {
+  0x02,
+  0x0a,
+  32,
   0x14, 0x00, 0x00, 0x00,
   id_project,
   class_piloting,
-  0x01,
+  cmd_pcmd,
+  0x00,
+  flag,
+  0x00, // roll
+  0x9c, // pitch
+  0x00, // yaw
+  0x00,
+  0x00,
+  0x00,
+  0x00,
   0x00,
   '\r',
+  '\n'
+};
+
+uint8_t packet3[22] = {
+  0x02,
+  0x0a,
+  42,
+  0x14, 0x00, 0x00, 0x00,
+  id_project,
+  class_piloting,
+  cmd_pcmd,
+  0x00,
+  flag,
+  0x00, // roll
+  0x9c, // pitch
+  0x00, // yaw
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  '\r',
+  '\n'
 };
 
 SoftwareSerial mySerial =  SoftwareSerial(rxPin, txPin);
@@ -55,31 +102,31 @@ void setup()
   delay(3000);
   while (mySerial.available())
     Serial.write(mySerial.read());
+  
+  
   mySerial.println("AT+CIPSEND=4,13\r");
   delay(1000);
   
-  mySerial.write((uint8_t)0x03);
-  mySerial.write((uint8_t)0x0b);
-  mySerial.write((uint8_t)0x42);
-  mySerial.write((uint8_t)0x0b);
-  mySerial.write((uint8_t)0);
-  mySerial.write((uint8_t)0);
-  mySerial.write((uint8_t)0);
-  mySerial.write((uint8_t)0x01);
-  mySerial.write((uint8_t)0x00);
-  mySerial.write((uint8_t)0x01);
-  mySerial.write((uint8_t)0x00);
-  mySerial.write('\r');
-  mySerial.write('\n');
-  
+  mySerial.write(packet,13);
+   while (mySerial.available())
+    Serial.write(mySerial.read());
+  delay(1000);
   
   
 }
 
 void loop() // run over and over
 {
-  if (mySerial.available())
+  /*if (mySerial.available())
     Serial.write(mySerial.read());
   if (Serial.available())
     mySerial.write(Serial.read());
+    */
+    
+    mySerial.println("AT+CIPSEND=4,22\r");
+    mySerial.write(packet3,22);
+    mySerial.println("AT+CIPSEND=4,22\r");
+    mySerial.write(packet2,22);
+    delay(50);
+    
 }
