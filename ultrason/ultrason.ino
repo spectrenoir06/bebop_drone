@@ -32,7 +32,7 @@ long scanLeft()
   delayMicroseconds(10); 
   digitalWrite(left_trig, LOW); 
   lecture_echo = pulseIn(left_echo, HIGH); 
-  return (lecture_echo / 58); 
+  return ((lecture_echo / 58) > 3000 ? 3000 : lecture_echo / 58);
 }
 
 long scanRight()
@@ -41,7 +41,7 @@ long scanRight()
   delayMicroseconds(10); 
   digitalWrite(right_trig, LOW); 
   lecture_echo = pulseIn(right_echo, HIGH); 
-  return (lecture_echo / 58); 
+  return ((lecture_echo / 58) > 3000 ? 3000 : lecture_echo / 58);
 }
 
 long scanFront()
@@ -50,7 +50,7 @@ long scanFront()
   delayMicroseconds(10); 
   digitalWrite(front_trig, LOW); 
   lecture_echo = pulseIn(front_echo, HIGH); 
-  return (lecture_echo / 58);
+  return ((lecture_echo / 58) > 3000 ? 3000 : lecture_echo / 58);
 }
 
 
