@@ -118,36 +118,59 @@ void setup()
 {
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
+  Serial1.begin(9600);
   //pinMode(rxPin, INPUT);
   //pinMode(txPin, OUTPUT);
 
   // set the data rate for the SoftwareSerial port
   //Serial.begin(9600);
-  Serial.println("AT+RST");
+  Serial1.println("AT+RST\r");
   
-  delay(8000);
-  while (Serial.available())
-    Serial.write(Serial.read());
+  delay(3000);
+  while (Serial1.available())
+    Serial.write(Serial1.read());
+  Serial.println();
   
-  Serial.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
-//  Serial.println("AT+CWJAP=\"Spectre\",\"\"\r");
+//  Serial1.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
+  Serial1.println("AT+CWJAP=\"Spectre\",\"\"\r");
+  delay(4000);
+  
+  
+  while (Serial1.available())
+    Serial.write(Serial1.read());
+  Serial.println();
+  
+  Serial1.println("AT+CIPMUX=1\r");
+  delay(2000);
+  
+  while (Serial1.available())
+    Serial.write(Serial1.read());
+  Serial.println();
+  
+//  Serial1.println("AT+CIPSTART=4,\"UDP\",\"192.168.42.1\",54321\r");
+  Serial1.println("AT+CIPSTART=4,\"UDP\",\"192.168.43.14\",54321\r");
   delay(5000);
   
-  Serial.println("AT+CIPMUX=1\r");
-  delay(3000);
+  while (Serial1.available())
+    Serial.write(Serial1.read());
+  Serial.println();
   
-  Serial.println("AT+CIPSTART=4,\"UDP\",\"192.168.42.1\",54321\r");
-//  Serial.println("AT+CIPSTART=4,\"UDP\",\"192.168.43.14\",54321\r");
-  delay(3000);
-  
-  Serial.println("AT+CIPSEND=4,13\r");
+  Serial1.println("AT+CIPSEND=4,13\r");
+  Serial.println();
   delay(1000);
   
-  Serial.write((byte*)&packet, sizeof(packet));
-  Serial.write('\r');
-  Serial.write('\n');
+  while (Serial1.available())
+    Serial.write(Serial1.read());
+  Serial.println();
+  
+  Serial1.write((byte*)&packet, sizeof(packet));
+  Serial1.write('\r');
+  Serial1.write('\n');
   
   delay(5000);
+  
+  while (Serial1.available())
+    Serial.write(Serial1.read());
   
   packet.frame_type = 0x02;
   packet.buffer_id  = 0x0a;
@@ -157,26 +180,27 @@ void setup()
 
 void loop() // run over and over
 {
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 1000; i++) {
     packet.sequence = 42;
   
-    Serial.println("AT+CIPSEND=4,22\r");
-    Serial.write((byte*)&packet, sizeof(packet));
-    Serial.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
-    Serial.write('\r');
-    Serial.write('\n');
-    delay(300);
+    Serial1.println("AT+CIPSEND=4,22\r");
+    Serial1.write((byte*)&packet, sizeof(packet));
+    Serial1.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
+    Serial1.write('\r');
+    Serial1.write('\n');
     
-
+    
+    delay(200);
+  
     
      packet.sequence = 32; 
     
-    Serial.println("AT+CIPSEND=4,22\r");
-    Serial.write((byte*)&packet, sizeof(packet));
-    Serial.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
-    Serial.write('\r');
-    Serial.write('\n');
-    delay(300);
+    Serial1.println("AT+CIPSEND=4,22\r");
+    Serial1.write((byte*)&packet, sizeof(packet));
+    Serial1.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
+    Serial1.write('\r');
+    Serial1.write('\n');
+    delay(200);
     
 
       
