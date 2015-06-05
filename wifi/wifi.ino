@@ -112,49 +112,41 @@ t_arg_pcmd packet_pcmd_arg = {
   0,     // psi [NOT USED] - Magnetic north heading of the controlling device (deg) [-180;180]
 };
 
-SoftwareSerial mySerial =  SoftwareSerial(rxPin, txPin);
+//SoftwareSerial mySerial =  SoftwareSerial(rxPin, txPin);
 
 void setup()  
 {
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
-  pinMode(rxPin, INPUT);
-  pinMode(txPin, OUTPUT);
+  //pinMode(rxPin, INPUT);
+  //pinMode(txPin, OUTPUT);
 
   // set the data rate for the SoftwareSerial port
-  mySerial.begin(9600);
-  mySerial.println("AT+RST");
+  //Serial.begin(9600);
+  Serial.println("AT+RST");
   
   delay(8000);
-  while (mySerial.available())
-    Serial.write(mySerial.read());
+  while (Serial.available())
+    Serial.write(Serial.read());
   
-  mySerial.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
-//  mySerial.println("AT+CWJAP=\"Spectre\",\"\"\r");
-  
+  Serial.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
+//  Serial.println("AT+CWJAP=\"Spectre\",\"\"\r");
   delay(5000);
-  while (mySerial.available())
-    Serial.write(mySerial.read());
-  mySerial.println("AT+CIPMUX=1\r");
-  delay(3000);
-  while (mySerial.available())
-    Serial.write(mySerial.read());
-  mySerial.println("AT+CIPSTART=4,\"UDP\",\"192.168.42.1\",54321\r");
-//  mySerial.println("AT+CIPSTART=4,\"UDP\",\"192.168.43.14\",54321\r");
-  delay(3000);
-  while (mySerial.available())
-    Serial.write(mySerial.read());
   
+  Serial.println("AT+CIPMUX=1\r");
+  delay(3000);
   
-  mySerial.println("AT+CIPSEND=4,13\r");
+  Serial.println("AT+CIPSTART=4,\"UDP\",\"192.168.42.1\",54321\r");
+//  Serial.println("AT+CIPSTART=4,\"UDP\",\"192.168.43.14\",54321\r");
+  delay(3000);
+  
+  Serial.println("AT+CIPSEND=4,13\r");
   delay(1000);
   
-  mySerial.write((byte*)&packet, sizeof(packet));
-  mySerial.write('\r');
-  mySerial.write('\n');
-   
-   while (mySerial.available())
-    Serial.write(mySerial.read());
+  Serial.write((byte*)&packet, sizeof(packet));
+  Serial.write('\r');
+  Serial.write('\n');
+  
   delay(5000);
   
   packet.frame_type = 0x02;
@@ -168,32 +160,30 @@ void loop() // run over and over
     for (int i = 0; i < 40; i++) {
     packet.sequence = 42;
   
-    mySerial.println("AT+CIPSEND=4,22\r");
-    mySerial.write((byte*)&packet, sizeof(packet));
-    mySerial.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
-    mySerial.write('\r');
-    mySerial.write('\n');
+    Serial.println("AT+CIPSEND=4,22\r");
+    Serial.write((byte*)&packet, sizeof(packet));
+    Serial.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
+    Serial.write('\r');
+    Serial.write('\n');
     delay(300);
     
-    while (mySerial.available())
-      Serial.write(mySerial.read());
+
     
      packet.sequence = 32; 
     
-    mySerial.println("AT+CIPSEND=4,22\r");
-    mySerial.write((byte*)&packet, sizeof(packet));
-    mySerial.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
-    mySerial.write('\r');
-    mySerial.write('\n');
+    Serial.println("AT+CIPSEND=4,22\r");
+    Serial.write((byte*)&packet, sizeof(packet));
+    Serial.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg));
+    Serial.write('\r');
+    Serial.write('\n');
     delay(300);
     
-    while (mySerial.available())
-      Serial.write(mySerial.read());
+
       
     }
     
-//     while (mySerial.available())
-//      Serial.write(mySerial.read());
+//     while (Serial.available())
+//      Serial.write(Serial.read());
     
     while (42) 
     {
