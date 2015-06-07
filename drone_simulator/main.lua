@@ -35,8 +35,16 @@ function bebop.initialize()
        pitch    = 0,
        yaw      = 0,
        gaz      = 0,
-       psi      = 0
+       psi      = 0,
+       cmd = {
+           "FlatTrim",
+           "TakeOff",
+           "PCMD",
+           "Land",
+           "Emergency"
+       }
     }
+
    return new._object(bebop, o)
 end
 
@@ -74,36 +82,50 @@ i = 0
 j = 0
 
 function love.update(dt)
-	i = i + dt
-	j = j + dt
+
     data, msg_or_ip, port_or_nil = udpSocket:receivefrom()
 	if data then
-        tipe,
-        buffer_id,
-        sequence,
-        size,
-        id_project,
-        class_piloting,
-        cmd,
-        flag,
-        drone.roll,
-        drone.pitch,
-        drone.yaw,
-        drone.gaz,
-        drone.psi = struct.unpack("bbbi4bbi2bbbbbf", data)
-        print(
+        if string.len(data) == 20 then
+            tipe,
+            buffer_id,
+            sequence,
+            size,
+            id_project,
+            class_piloting,
+            cmd,
+            flag,
             drone.roll,
             drone.pitch,
             drone.yaw,
             drone.gaz,
-            drone.psi
-        )
+            drone.psi = struct.unpack("bbbi4bbi2bbbbbf", data)
+            print(
+                drone.roll,
+                drone.pitch,
+                drone.yaw,
+                drone.gaz,
+                drone.psi
+            )
+        elseif string.len(data) == 11 then
+            tipe,
+            buffer_id,
+            sequence,
+            size,
+            id_project,
+            class_piloting,
+            cmd = struct.unpack("bbbi4bbi2", data)
+            print(drone.cmd[cmd + 1])
+        end
+        i = 0
     else
-        drone.roll = 0
-        drone.pitch = 0
-        drone.yaw = 0
-        drone.gaz = drone.gaz - dt
-        drone.ps = 0
+        i = i + dt
+        if (i > 0.25) then
+            drone.roll = 0
+            drone.pitch = 0
+            drone.yaw = 0
+            drone.gaz = 0
+            drone.ps = 0
+        end
     end
 
 
