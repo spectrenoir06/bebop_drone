@@ -74,7 +74,7 @@ long	cm;
 int		front, left, right;
 
 void	take_off() {
-	Serial1.println("AT+CIPSEND=4,11\r");
+	Serial1.println("AT+CIPSEND=11\r");
 
 	while (Serial1.find(">"));
 
@@ -113,12 +113,12 @@ void	wifi_setup() {
 
 	while (Serial1.find("OK"));
 
-	Serial1.println("AT+CIPMUX=1\r");
+	Serial1.println("AT+CIPMUX=0\r");
 
 	while (Serial1.find("OK"));
 
 	//  Serial1.println("AT+CIPSTART=4,\"UDP\",\"192.168.42.1\",54321\r");
-	Serial1.println("AT+CIPSTART=4,\"UDP\",\"192.168.43.14\",54321\r");
+	Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.43.14\",54321\r");
 
 	while (Serial1.find("OK"));
 
@@ -163,11 +163,11 @@ long scanFront()
 }
 
 void    send_pack() {
-	for (int i = 0; i < 50; i++)
-	{
-	packet.sequence = i%50;
+	/*for (int i = 0; i < 50; i++)*/
+	/*{*/
+	packet_pcmd_arg.pitch = front;
 
-	Serial1.println("AT+CIPSEND=4,20\r");   // send on channel 4 20byte
+	Serial1.println("AT+CIPSEND=20\r");   // send on channel 4 20byte
 
 	while (!Serial1.find(">"));             // wait
 
@@ -177,21 +177,29 @@ void    send_pack() {
 	//Serial1.write('\n');
 
 	while (!Serial1.find("K")); // wait
-	}
+	/*}*/
 }
 
-void loop()
-{
-	front = scanFront();
+void loop() {
+	/*front = scanFront();
 	left = scanLeft();
-	right = scanRight();
+	right = scanRight();*/
+
+	/*if (front < 75) {
+		send_pack();
+	}*/
+
+	while ((front = scanFront()) < 75) {
+		Serial.println(front);
+		send_pack();
+	}
 
 	/* --------- send to computer ----------- */
-	Serial.print(front);
+	/*Serial.print(front);
 	Serial.print(" ");
 	Serial.print(left);
 	Serial.print(" ");
-	Serial.println(right);
+	Serial.println(right);*/
 	/* -------------------------------------- */
 
 	//delay(90);
