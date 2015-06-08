@@ -162,13 +162,13 @@ long scanFront()
 	return (lecture_echo / 58);
 }
 
-void    send_pack_straf_right() {
+void    send_pack_test() {
 	/*for (int i = 0; i < 25; i++)*/
 	/*{*/
 	/*packet_pcmd_arg.pitch = front;*/
 
 	packet_pcmd_arg.pitch = 0;
-	packet_pcmd_arg.roll = 100;
+	packet_pcmd_arg.roll = 0;
 	packet.sequence = packet.sequence < 255 ? packet.sequence + 10 : 10;
 	Serial1.println("AT+CIPSEND=20\r");   // send on channel 4 20byte
 
