@@ -53,7 +53,7 @@ t_packet packet = {
 t_arg_pcmd packet_pcmd_arg = {
 	1,		// flag   Boolean flag to activate roll/pitch movement
 	0,		// roll   Roll consign for the drone  [-100;100]
-	-100,	// pitch  Pitch consign for the drone [-100;100]
+	0,	// pitch  Pitch consign for the drone [-100;100]
 	0,		// yaw    Yaw consign for the drone   [-100;100]
 	0,		// gaz    Gaz consign for the drone   [-100;100]
 	0,		// psi [NOT USED] - Magnetic north heading of the controlling device (deg) [-180;180]
@@ -162,10 +162,34 @@ long scanFront()
 	return (lecture_echo / 58);
 }
 
-void    send_pack() {
+void    send_pack_straf_right() {
 	/*for (int i = 0; i < 25; i++)*/
 	/*{*/
 	/*packet_pcmd_arg.pitch = front;*/
+
+	packet_pcmd_arg.pitch = 0;
+	packet_pcmd_arg.roll = 100;
+	packet.sequence = packet.sequence < 255 ? packet.sequence + 10 : 10;
+	Serial1.println("AT+CIPSEND=20\r");   // send on channel 4 20byte
+
+	while (!Serial1.find(">"));             // wait
+
+	Serial1.write((byte*)&packet, sizeof(packet));                   // write 11byte
+	Serial1.write((byte*)&packet_pcmd_arg, sizeof(packet_pcmd_arg)); // write 9byte
+	//Serial1.write('\r');
+	//Serial1.write('\n');
+
+	while (!Serial1.find("K")); // wait
+	/*}*/
+}
+
+void    send_pack(int8_t straf, int8_t pitch) {
+	/*for (int i = 0; i < 25; i++)*/
+	/*{*/
+	/*packet_pcmd_arg.pitch = front;*/
+
+	packet_pcmd_arg.pitch = pitch;
+	packet_pcmd_arg.roll = straf;
 	packet.sequence = packet.sequence < 255 ? packet.sequence + 10 : 10;
 	Serial1.println("AT+CIPSEND=20\r");   // send on channel 4 20byte
 
@@ -189,7 +213,7 @@ void loop() {
 
 	while ((front = scanFront()) < 75) {
 		Serial.println(front);
-		send_pack();
+		send_pack(0, -100);
 	}
 
 	/* --------- send to computer ----------- */
