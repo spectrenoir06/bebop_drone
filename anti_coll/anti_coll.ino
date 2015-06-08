@@ -51,7 +51,7 @@ t_packet packet = {
 };
 
 t_arg_pcmd packet_pcmd_arg = {
-	0,		// flag   Boolean flag to activate roll/pitch movement
+	1,		// flag   Boolean flag to activate roll/pitch movement
 	0,		// roll   Roll consign for the drone  [-100;100]
 	-100,	// pitch  Pitch consign for the drone [-100;100]
 	0,		// yaw    Yaw consign for the drone   [-100;100]
@@ -79,8 +79,8 @@ void	take_off() {
 	while (Serial1.find(">"));
 
 	Serial1.write((byte*)&packet, sizeof(packet));
-	//Serial1.write('\r');
-	//Serial1.write('\n');
+	/*Serial1.write('\r');*/
+	/*Serial1.write('\n');*/
 
 	while (!Serial1.find("K")); // wait
 
@@ -108,8 +108,8 @@ void	wifi_setup() {
 
 	while (Serial1.find("ready"));
 
-	//  Serial1.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
-	Serial1.println("AT+CWJAP=\"Spectre\",\"\"\r");
+	Serial1.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
+	/*Serial1.println("AT+CWJAP=\"Spectre\",\"\"\r");*/
 
 	while (Serial1.find("OK"));
 
@@ -117,8 +117,8 @@ void	wifi_setup() {
 
 	while (Serial1.find("OK"));
 
-	//  Serial1.println("AT+CIPSTART=4,\"UDP\",\"192.168.42.1\",54321\r");
-	Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.43.14\",54321\r");
+	Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.42.1\",54321\r");
+	/*Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.43.14\",54321\r");*/
 
 	while (Serial1.find("OK"));
 
@@ -163,10 +163,10 @@ long scanFront()
 }
 
 void    send_pack() {
-	/*for (int i = 0; i < 50; i++)*/
+	/*for (int i = 0; i < 25; i++)*/
 	/*{*/
-	packet_pcmd_arg.pitch = front;
-
+	/*packet_pcmd_arg.pitch = front;*/
+	packet.sequence = packet.sequence < 255 ? packet.sequence + 10 : 10;
 	Serial1.println("AT+CIPSEND=20\r");   // send on channel 4 20byte
 
 	while (!Serial1.find(">"));             // wait
@@ -185,9 +185,7 @@ void loop() {
 	left = scanLeft();
 	right = scanRight();*/
 
-	/*if (front < 75) {
-		send_pack();
-	}*/
+	/*send_pack();*/
 
 	while ((front = scanFront()) < 75) {
 		Serial.println(front);
