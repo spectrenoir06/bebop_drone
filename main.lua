@@ -116,16 +116,16 @@ end
 
 -----------------------------------
 
-rserial=io.open("/dev/ttyACM0","r")
+--rserial=io.open("/dev/ttyACM0","r")
 
 if not rserial then
-    error("Pas de port serie ouvert")
+--    error("Pas de port serie ouvert")
 end
 
-while chaine==nil do
-        chaine=rserial:read()
-        rserial:flush()
-end
+--while chaine==nil do
+--        chaine=rserial:read()
+--        rserial:flush()
+--end
 
 ----------------------------------------------------------------
 
@@ -146,9 +146,9 @@ j = 0
 
 function love.update(dt)
     j = j + dt
-    str = rserial:read("*l")
-    print("str = ",str)
-    if str then
+    --str = rserial:read("*l")
+    --print("str = ",str)
+    --[[if str then
         front, left, right = string.match(str,"(%d+) (%d+) (%d+)")
         print(front, left, right)
         if (front and left and right) then
@@ -156,16 +156,22 @@ function love.update(dt)
             drone.left = tonumber(left)
             drone.right = tonumber(right)
         end
-    end
+    end--
     --rserial:flush()
+]]--
+    if love.keyboard.isDown("w") then
+    print("up")
+        drone:send(0, -100, 0, 0)
+    end
 
     if j > 0.02 then
-        if (drone.front < 75) then
-            drone:send(0, -100, 0, 0)
-        end
+        --if (drone.front < 75) then
+        --    drone:send(0, -100, 0, 0)
+        --end
         j = 0
     end
 end
+
 
 function love.draw()
     drone:draw()
