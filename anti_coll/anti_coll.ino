@@ -106,21 +106,21 @@ void	wifi_setup() {
 	Serial.println("Start");
 	Serial1.println("AT+RST\r");
 
-	while (Serial1.find("ready"));
+	while (!Serial1.find("ready"));
 
-	Serial1.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
-	/*Serial1.println("AT+CWJAP=\"Spectre\",\"\"\r");*/
+	//Serial1.println("AT+CWJAP=\"BebopDrone-B030867\",\"\"\r");
+	Serial1.println("AT+CWJAP=\"Spectre\",\"\"\r");
 
-	while (Serial1.find("OK"));
+	while (!Serial1.find("OK"));
 
 	Serial1.println("AT+CIPMUX=0\r");
 
-	while (Serial1.find("OK"));
+	while (!Serial1.find("OK"));
 
-	Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.42.1\",54321\r");
-	/*Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.43.14\",54321\r");*/
+	//Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.42.1\",54321\r");
+	Serial1.println("AT+CIPSTART=\"UDP\",\"192.168.43.14\",54321\r");
 
-	while (Serial1.find("OK"));
+	while (!Serial1.find("OK"));
 
 	take_off();
 }
@@ -200,7 +200,7 @@ void    send_pack(int8_t straf, int8_t pitch) {
 	//Serial1.write('\r');
 	//Serial1.write('\n');
 
-	while (!Serial1.find("K")); // wait
+	while (!Serial1.find("SEND OK")); // wait
 	/*}*/
 }
 
@@ -211,9 +211,9 @@ void loop() {
 
 	/*send_pack();*/
 
-	while ((front = scanFront()) < 75) {
+	while ((front = scanFront()) < 100) {
 		Serial.println(front);
-		send_pack(0, -100);
+		send_pack(0, 100 - front);
 	}
 
 	/* --------- send to computer ----------- */
