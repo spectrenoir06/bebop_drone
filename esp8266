@@ -1,6 +1,0 @@
-AT+RST										-- restart
-AT+CWMODe=3 								-- mode 3 (AP+STA)
-AT+CWLAP									-- scan wifi
-AT+CIPSTART=4,"UDP","192.168.42.1",54321 	-- connext bebop
-AT+CIPMODE=1								-- data transmission mode
-AT+CIPSEND=4,`size`							-- send data of size = `size`
