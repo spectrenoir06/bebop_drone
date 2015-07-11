@@ -1,1 +1,1 @@
-![alt tag](img/screenshot2.png)
+![alt tag](../../img/screenshot2.png)
